@@ -1,6 +1,13 @@
 # Prerequisites
 *.d
 
+#vscode
+.vscode
+.editorconfig
+
+#format
+.clang-format
+
 # Compiled Object files
 *.slo
 *.lo
@@ -25,6 +32,9 @@
 *.la
 *.a
 *.lib
+
+#build
+build/
 
 # Executables
 *.exe
