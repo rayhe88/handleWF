@@ -12,6 +12,7 @@
 #include <type_traits>
 #include <vector>
 
+class Field;
 class Wavefunction {
 public:
   Wavefunction();
@@ -44,6 +45,8 @@ private:
   void setAngularVector();
   void setScientificOutput();
   void setIntegerOutput();
+
+  friend class Field;
 };
 
 #endif

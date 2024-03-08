@@ -1,5 +1,5 @@
-#ifndef _RVECTOR_H_
-#define _RVECTOR_H_
+#ifndef _RVECTOR_HPP_
+#define _RVECTOR_HPP_
 
 #include <iostream>
 using namespace std;
