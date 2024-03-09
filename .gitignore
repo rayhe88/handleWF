@@ -1,6 +1,10 @@
 # Prerequisites
 *.d
 
+bin/
+
+include/version.hpp
+
 #vscode
 .vscode
 .editorconfig
