@@ -13,9 +13,7 @@ int main(int argc, char *argv[]) {
 
   Field field(wf);
 
-  // field.evalDensity();
-
-  field.dumpXYZ();
+  field.evalDensity();
 
   // wf.printWF();
 }
