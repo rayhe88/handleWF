@@ -140,6 +140,10 @@ double Atom::getMass() { return mass; }
 
 string Atom::getSymbol() { return symb; }
 
+int Atom::get_atnum() { return zatom; }
+
+double Atom::get_charge() { return (double)zatom; }
+
 ostream &operator<<(ostream &o, const Atom &a) {
   o << fixed << setw(3) << a.symb << setw(6) << a.zatom
     << setiosflags(ios::right) << setw(10) << fixed << setprecision(4)

@@ -43,6 +43,8 @@ public:
   double get_x();
   double get_y();
   double get_z();
+  int get_atnum();
+  double get_charge();
   //***********************************************
   friend ostream &operator<<(ostream &o, const Atom &);
 };
