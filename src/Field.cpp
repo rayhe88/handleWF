@@ -132,7 +132,7 @@ void Field::evalDensity() {
   double xmin = -10.0, xmax = 10.0;
   double ymin = -10.0, ymax = 10.0;
   double zmin = -5.0, zmax = 5.0;
-  double delta = 0.5;
+  double delta = 0.25;
 
   int npoints_x = int((xmax - xmin) / delta);
   int npoints_y = int((ymax - ymin) / delta);
@@ -167,7 +167,7 @@ void Field::evalDensity2() {
   double xmin = -10.0, xmax = 10.0;
   double ymin = -10.0, ymax = 10.0;
   double zmin = -5.0, zmax = 5.0;
-  double delta = 0.5;
+  double delta = 0.25;
 
   int npoints_x = int((xmax - xmin) / delta);
   int npoints_y = int((ymax - ymin) / delta);
@@ -293,7 +293,7 @@ void Field::evalDensity2D() {
   vector<double> field;
   double xmin = -10.0, xmax = 10.0;
   double ymin = -10.0, ymax = 10.0;
-  double delta = 0.1;
+  double delta = 0.25;
 
   int npoints_x = int((xmax - xmin) / delta);
   int npoints_y = int((ymax - ymin) / delta);
@@ -332,7 +332,7 @@ void Field::evalDensity_sycl() {
   double xmin = -10.0, xmax = 10.0;
   double ymin = -10.0, ymax = 10.0;
   double zmin = -5.0, zmax = 5.0;
-  double delta = 0.5;
+  double delta = 0.25;
   vector<double> field;
 
 
@@ -419,7 +419,7 @@ void Field::evalDensity_sycl2() {
   double xmin = -10.0, xmax = 10.0;
   double ymin = -10.0, ymax = 10.0;
   double zmin = -5.0, zmax = 5.0;
-  double delta = 0.5;
+  double delta = 0.25;
   vector<double> field;
 
 
