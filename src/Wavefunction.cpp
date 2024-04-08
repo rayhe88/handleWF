@@ -32,6 +32,8 @@ void Wavefunction::loadWF(string fname) {
       }
       if (line.find("<Primitive Centers>") != std::string::npos) {
         readVector(file, icntrs, "</Primitive Centers>");
+        for (auto &i : icntrs)
+          i -= 1;
       }
       if (line.find("<Primitive Types>") != std::string::npos) {
         readVector(file, itypes, "</Primitive Types>");
