@@ -7,20 +7,30 @@ This is the version 2 written using C++.
 ## Compilation
 
 Create the `build` subdirectory
-```mkdir build```
+```
+mkdir build
+```
 
 Move to the `build`
-```cd build```
+```
+cd build
+```
 
 Type the next commands
-```cmake -H. -DUSE_SYCL=On -DCMAKE_CXX_COMPILER=icpx ../src/```
+```
+cmake -H. -DUSE_SYCL=On -DCMAKE_CXX_COMPILER=icpx ../src/
+```
 
 Finally build the project
-```cmake --build .```
+```
+cmake --build .
+```
 
 ## Testing
 
-```./handleWF.x ../test/dimer_HCOOH.wfx```
+```
+./handleWF.x ../test/dimer_HCOOH.wfx
+```
 
 
 
