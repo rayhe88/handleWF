@@ -4,6 +4,7 @@
 bin/
 
 include/version.hpp
+out
 
 #vscode
 .vscode
