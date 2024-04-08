@@ -210,6 +210,7 @@ void Field::dumpCube(double xmin, double ymin, double zmin, double delta,
          << std::scientific << valor;
     if (cnt == 6) {
       fout << std::endl;
+      cnt = 0;
     }
   }
   if (cnt != 0)
