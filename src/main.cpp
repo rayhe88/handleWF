@@ -1,6 +1,7 @@
 #include "Field.hpp"
 #include "Wavefunction.hpp"
 #include "version.hpp"
+#include "Timer.hpp"
 #include <cstdlib>
 
 int main(int argc, char *argv[]) {
@@ -19,7 +20,23 @@ int main(int argc, char *argv[]) {
 
   Field field(wf);
 
+  Timer tcpu, tgpu;
+
+  tcpu.start();
+  field.evalDensity2();
+  tcpu.stop();
+
+  tgpu.start();
   field.evalDensity_sycl();
+  tgpu.stop();
+
+  std::cout << " Time for CPU : " << tcpu.getDuration() << " \u03BC"
+            << "s" << std::endl;
+
+  std::cout << " Time for GPU  : " << tgpu.getDuration() << " \u03BC"
+            << "s" << std::endl;
+
+  std::cout << " Ratio CPU/GPU : " << tcpu.getDuration() / tgpu.getDuration() << std::endl;
 
   // wf.printWF();
   exit(EXIT_SUCCESS);
