@@ -411,3 +411,91 @@ void Field::evalDensity_sycl() {
   delete[] moi;
   delete[] field_local;
 }
+void Field::evalDensity_sycl2() {
+
+  cl::sycl::queue q(cl::sycl::default_selector{});
+  std::cout << " Running on " << q.get_device().get_info<cl::sycl::info::device::name>() << std::endl;
+
+  double xmin = -10.0, xmax = 10.0;
+  double ymin = -10.0, ymax = 10.0;
+  double zmin = -5.0, zmax = 5.0;
+  double delta = 0.5;
+  vector<double> field;
+
+
+  int npoints_x = int((xmax - xmin) / delta);
+  int npoints_y = int((ymax - ymin) / delta);
+  int npoints_z = int((zmax - zmin) / delta);
+  const size_t nsize = npoints_x * npoints_y * npoints_z;
+  int natm = wf.natm;
+  int npri = wf.npri;
+  int norb = wf.norb;
+  double *moi = new double[npri];
+  double *field_local = new double[nsize];
+
+  std::cout << " Points ( " << npoints_x << "," << npoints_y << "," << npoints_z
+            << ")" << std::endl;
+  std::cout << " TotalPoints : " << npoints_x * npoints_y * npoints_z
+            << std::endl;
+
+  double *coor = new double [3*natm];
+  for(int i=0; i<natm; i++){
+    Rvector R(wf.atoms[i].getCoors());
+    coor[3*i] = R.get_x();
+    coor[3*i+1] = R.get_y();
+    coor[3*i+2] = R.get_z();
+  }
+
+  cl::sycl::buffer<int, 1>   icnt_buff   (wf.icntrs.data(), cl::sycl::range<1>(npri));
+  cl::sycl::buffer<int, 1>   vang_buff   (wf.vang.data()  , cl::sycl::range<1>(3*npri));
+  cl::sycl::buffer<double, 1> coor_buff  (coor            , cl::sycl::range<1>(3*natm));
+  cl::sycl::buffer<double, 1> eprim_buff (wf.depris.data(), cl::sycl::range<1>(npri));
+  cl::sycl::buffer<double, 1> moi_buff   (moi             , cl::sycl::range<1>(npri));
+  cl::sycl::buffer<double, 1> coef_buff  (wf.dcoefs.data(), cl::sycl::range<1>(npri*norb));
+  cl::sycl::buffer<double, 1> nocc_buff  (wf.dnoccs.data(), cl::sycl::range<1>(norb));
+  cl::sycl::buffer<double, 1> field_buff (field_local, cl::sycl::range<1>(nsize));
+
+  q.submit([&](cl::sycl::handler &h){
+    auto field_acc = field_buff.get_access<cl::sycl::access::mode::write>(h);
+    auto moi_acc = moi_buff.get_access<cl::sycl::access::mode::write>(h);
+    auto icnt_acc = icnt_buff.get_access<cl::sycl::access::mode::read>(h);
+    auto vang_acc = vang_buff.get_access<cl::sycl::access::mode::read>(h);
+    auto coor_acc = coor_buff.get_access<cl::sycl::access::mode::read>(h);
+    auto eprim_acc = eprim_buff.get_access<cl::sycl::access::mode::read>(h);
+    auto coef_acc = coef_buff.get_access<cl::sycl::access::mode::read>(h);
+    auto nocc_acc = nocc_buff.get_access<cl::sycl::access::mode::read>(h);
+
+    h.parallel_for<class Field3>(cl::sycl::range<3>(npoints_x, npoints_y, npoints_z), [=](cl::sycl::id<3> idx){
+      double cart[3];
+      int k = idx[2];
+      int j = idx[1];
+      int i = idx[0];
+      int iglob = i*npoints_y*npoints_z + j*npoints_z + k;
+
+      cart[0] = xmin + i * delta;
+      cart[1] = ymin + j * delta;
+      cart[2] = zmin + k * delta;
+
+      int *icnt_ptr = icnt_acc.get_pointer();
+      int *vang_ptr = vang_acc.get_pointer();
+      double *coor_ptr = coor_acc.get_pointer();
+      double *eprim_ptr = eprim_acc.get_pointer();
+      double *nocc_ptr = nocc_acc.get_pointer();
+      double *coef_ptr = coef_acc.get_pointer();
+      double *moi_ptr = moi_acc.get_pointer();
+
+      field_acc[iglob] = DensitySYCL2(norb, npri, icnt_ptr, vang_ptr, cart, coor_ptr, eprim_ptr, nocc_ptr, coef_ptr, moi_ptr);
+    });
+  });
+  q.wait();
+
+  for(int i=0; i<nsize; i++)
+     field.push_back(field_local[i]);
+
+  dumpCube(xmin, ymin, zmin, delta, npoints_x, npoints_y, npoints_z, field);
+  dumpXYZ();
+
+  delete[] coor;
+  delete[] moi;
+  delete[] field_local;
+}
