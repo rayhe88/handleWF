@@ -15,6 +15,7 @@ public:
   double gaussiana(Rvector r, int mu);
   double Density(Rvector r);
   void evalDensity();
+  void evalDensity2();
   void evalDensity2D();
 
   void evalDensity_sycl();

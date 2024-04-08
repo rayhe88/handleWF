@@ -161,6 +161,55 @@ void Field::evalDensity() {
   dumpXYZ();
 }
 
+void Field::evalDensity2() {
+
+  vector<double> field;
+  double xmin = -10.0, xmax = 10.0;
+  double ymin = -10.0, ymax = 10.0;
+  double zmin = -5.0, zmax = 5.0;
+  double delta = 0.5;
+
+  int npoints_x = int((xmax - xmin) / delta);
+  int npoints_y = int((ymax - ymin) / delta);
+  int npoints_z = int((zmax - zmin) / delta);
+
+  double *coor = new double [3*wf.natm];
+  for(int i=0; i<wf.natm; i++){
+    Rvector R(wf.atoms[i].getCoors());
+    coor[3*i] = R.get_x();
+    coor[3*i+1] = R.get_y();
+    coor[3*i+2] = R.get_z();
+  }
+
+  std::cout << " Points ( " << npoints_x << "," << npoints_y << "," << npoints_z
+            << ")" << std::endl;
+  std::cout << " TotalPoints : " << npoints_x * npoints_y * npoints_z
+            << std::endl;
+
+  for (int i = 0; i < npoints_x; i++) {
+    double x = xmin + i * delta;
+    for (int j = 0; j < npoints_y; j++) {
+      double y = ymin + j * delta;
+      for (int k = 0; k < npoints_z; k++) {
+        double z = zmin + k * delta;
+        double r[3];
+        r[0] = x;
+        r[1] = y;
+        r[2] = z;
+
+        double den = DensitySYCL2(wf.norb, wf.npri, wf.icntrs.data(), wf.vang.data(), r, coor, wf.depris.data(),
+                                  wf.dnoccs.data(), wf.dcoefs.data(), NULL);
+
+        field.push_back(den);
+      }
+    }
+  }
+
+  dumpCube(xmin, ymin, zmin, delta, npoints_x, npoints_y, npoints_z, field);
+  dumpXYZ();
+
+  delete[] coor;
+}
 void Field::dumpCube(double xmin, double ymin, double zmin, double delta,
                      int nx, int ny, int nz, vector<double> field) {
   std::ofstream fout("density.cube");
@@ -294,13 +343,7 @@ void Field::evalDensity_sycl() {
   int natm = wf.natm;
   int npri = wf.npri;
   int norb = wf.norb;
-  int *icnt = new int[npri];
-  int *vang = new int[3*npri];
-  double *coor = new double [3*natm];
-  double *eprim = new double [npri];
   double *moi = new double[npri];
-  double *coef = new double [npri*norb];
-  double *nocc = new double[norb];
   double *field_local = new double[nsize];
 
   std::cout << " Points ( " << npoints_x << "," << npoints_y << "," << npoints_z
@@ -308,20 +351,7 @@ void Field::evalDensity_sycl() {
   std::cout << " TotalPoints : " << npoints_x * npoints_y * npoints_z
             << std::endl;
 
-  for(int i=0; i<npri;i++){
-    icnt[i] = wf.icntrs[i];
-    vang[3*i] = wf.vang[3*i];
-    vang[3*i+1] = wf.vang[3*i+1];
-    vang[3*i+2] = wf.vang[3*i+2];
-    eprim[i] = wf.depris[i];
-    moi[i] = 0.;
-  }
-  for(int i=0; i<norb; i++){
-    nocc[i] =  wf.dnoccs[i];
-    for(int j=0; j<npri; j++){
-        coef[i*npri + j] = wf.dcoefs[i*npri + j];
-    }
-  }
+  double *coor = new double [3*natm];
   for(int i=0; i<natm; i++){
     Rvector R(wf.atoms[i].getCoors());
     coor[3*i] = R.get_x();
@@ -329,13 +359,13 @@ void Field::evalDensity_sycl() {
     coor[3*i+2] = R.get_z();
   }
 
-  cl::sycl::buffer<int, 1>   icnt_buff   (icnt,  cl::sycl::range<1>(npri));
-  cl::sycl::buffer<int, 1>   vang_buff   (vang,  cl::sycl::range<1>(3*npri));
-  cl::sycl::buffer<double, 1> coor_buff  (coor,  cl::sycl::range<1>(3*natm));
-  cl::sycl::buffer<double, 1> eprim_buff (eprim, cl::sycl::range<1>(npri));
-  cl::sycl::buffer<double, 1> moi_buff   (moi,   cl::sycl::range<1>(npri));
-  cl::sycl::buffer<double, 1> coef_buff  (coef,  cl::sycl::range<1>(npri*norb));
-  cl::sycl::buffer<double, 1> nocc_buff  (nocc,  cl::sycl::range<1>(norb));
+  cl::sycl::buffer<int, 1>   icnt_buff   (wf.icntrs.data(), cl::sycl::range<1>(npri));
+  cl::sycl::buffer<int, 1>   vang_buff   (wf.vang.data()  , cl::sycl::range<1>(3*npri));
+  cl::sycl::buffer<double, 1> coor_buff  (coor            , cl::sycl::range<1>(3*natm));
+  cl::sycl::buffer<double, 1> eprim_buff (wf.depris.data(), cl::sycl::range<1>(npri));
+  cl::sycl::buffer<double, 1> moi_buff   (moi             , cl::sycl::range<1>(npri));
+  cl::sycl::buffer<double, 1> coef_buff  (wf.dcoefs.data(), cl::sycl::range<1>(npri*norb));
+  cl::sycl::buffer<double, 1> nocc_buff  (wf.dnoccs.data(), cl::sycl::range<1>(norb));
   cl::sycl::buffer<double, 1> field_buff (field_local, cl::sycl::range<1>(nsize));
 
   q.submit([&](cl::sycl::handler &h){
@@ -357,6 +387,7 @@ void Field::evalDensity_sycl() {
       cart[0] = xmin + i * delta;
       cart[1] = ymin + j * delta;
       cart[2] = zmin + k * delta;
+
       int *icnt_ptr = icnt_acc.get_pointer();
       int *vang_ptr = vang_acc.get_pointer();
       double *coor_ptr = coor_acc.get_pointer();
@@ -376,12 +407,7 @@ void Field::evalDensity_sycl() {
   dumpCube(xmin, ymin, zmin, delta, npoints_x, npoints_y, npoints_z, field);
   dumpXYZ();
 
-  delete[] icnt;
-  delete[] vang;
   delete[] coor;
-  delete[] eprim;
   delete[] moi;
-  delete[] coef;
-  delete[] nocc;
   delete[] field_local;
 }
