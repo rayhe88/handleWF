@@ -5,6 +5,7 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+#include <CL/sycl.hpp>
 
 class Field {
 public:
@@ -14,7 +15,14 @@ public:
   double gaussiana(Rvector r, int mu);
   double Density(Rvector r);
   void evalDensity();
+  void evalDensity2D();
+
+  void evalDensity_sycl();
+  static SYCL_EXTERNAL double DensitySYCL(int, int, int*, int*, double*, double*, double *,double*, double*, double*);
+  static SYCL_EXTERNAL double DensitySYCL2(int, int, int*, int*, double*, double*, double *,double*, double*, double*);
+
   void dumpXYZ();
+
   void dumpCube(double, double, double, double, int, int, int, vector<double>);
 
 private:
