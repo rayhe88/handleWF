@@ -30,6 +30,23 @@ cmake --build .
 
 ```
 ./handleWF.x ../test/dimer_HCOOH.wfx
+Version: 0.0
+Compilation Date: Apr  9 2024  13:37:02
+Git SHA1: 6dba7e6
+ Points ( 80,80,40)
+ TotalPoints : 256000
+ Running on 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz
+ Points ( 80,80,40)
+ TotalPoints : 256000
+ Running on 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz
+ Points ( 80,80,40)
+ TotalPoints : 256000
+ Time for CPU : 5.0914e+07 μs
+ Time for GPU  : 1.39384e+06 μs (Kernel 1)
+ Time for GPU  : 2.16659e+06 μs (Kernel 2)
+ Ratio CPU/GPU (kernel1) : 36.5278
+ Ratio CPU/GPU (kernel2) : 23.4997
+
 ```
 
 
