@@ -46,6 +46,6 @@ int main(int argc, char *argv[]) {
   std::cout << " Ratio CPU/GPU (kernel1) : " << tcpu.getDuration() / tgpu.getDuration() << std::endl;
   std::cout << " Ratio CPU/GPU (kernel2) : " << tcpu.getDuration() / tgpu2.getDuration() << std::endl;
 
-  // wf.printWF();
+  //wf.printWF();
   exit(EXIT_SUCCESS);
 }

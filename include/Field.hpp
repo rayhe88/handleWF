@@ -5,6 +5,7 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+#include <string>
 #include <CL/sycl.hpp>
 
 class Field {
@@ -21,11 +22,11 @@ public:
   void evalDensity_sycl();
   void evalDensity_sycl2();
   static SYCL_EXTERNAL double DensitySYCL(int, int, int*, int*, double*, double*, double *,double*, double*, double*);
-  static SYCL_EXTERNAL double DensitySYCL2(int, int, int*, int*, double*, double*, double *,double*, double*, double*);
+  static SYCL_EXTERNAL double DensitySYCL2(int, int, int*, int*, double*, double*, double *,double*, double*);
 
-  void dumpXYZ();
+  void dumpXYZ(std::string filename);
 
-  void dumpCube(double, double, double, double, int, int, int, vector<double>);
+  void dumpCube(double, double, double, double, int, int, int, vector<double>, std::string filename);
 
 private:
   Wavefunction &wf;
