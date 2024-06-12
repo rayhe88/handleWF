@@ -27,12 +27,11 @@ cmake --build .
 ```
 
 ## Testing
-
+### DELL Laptop 
 ```
 ./handleWF.x ../test/dimer_HCOOH.wfx
-Version: 0.0
-Compilation Date: Apr  9 2024  13:37:02
-Git SHA1: 6dba7e6
+Compilation Date: Jun 12 2024  14:19:26
+Git SHA1: 062b803
  Points ( 80,80,40)
  TotalPoints : 256000
  Running on 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz
@@ -41,12 +40,30 @@ Git SHA1: 6dba7e6
  Running on 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz
  Points ( 80,80,40)
  TotalPoints : 256000
- Time for CPU : 5.0914e+07 μs
- Time for GPU  : 1.39384e+06 μs (Kernel 1)
- Time for GPU  : 2.16659e+06 μs (Kernel 2)
- Ratio CPU/GPU (kernel1) : 36.5278
- Ratio CPU/GPU (kernel2) : 23.4997
-
+ Time for CPU : 5.24481e+07 μs
+ Time for GPU  : 1.12036e+06 μs (Kernel 1)
+ Time for GPU  : 2.275e+06 μs (Kernel 2)
+ Ratio CPU/GPU (kernel1) : 46.8139
+ Ratio CPU/GPU (kernel2) : 23.0541
+```
+### Sunspot
+```
+./handleWF.x ../test/dimer_HCOOH.wfx
+Compilation Date: Jun 12 2024  19:24:00
+Git SHA1: 062b803
+ Points ( 80,80,40)
+ TotalPoints : 256000
+ Running on Intel(R) Data Center GPU Max 1550
+ Points ( 80,80,40)
+ TotalPoints : 256000
+ Running on Intel(R) Data Center GPU Max 1550
+ Points ( 80,80,40)
+ TotalPoints : 256000
+ Time for CPU : 5.11796e+07 μs
+ Time for GPU  : 1.64558e+06 μs (Kernel 1)
+ Time for GPU  : 140444 μs (Kernel 2)
+ Ratio CPU/GPU (kernel1) : 31.1012
+ Ratio CPU/GPU (kernel2) : 364.413
 ```
 
 ## Acknowledgements
