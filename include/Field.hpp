@@ -6,7 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 
 class Field {
 public:

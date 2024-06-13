@@ -5,7 +5,7 @@
 #include <iomanip>
 #include <iostream>
 
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 
 Field::Field(Wavefunction &wf) : wf(wf) {}
 
@@ -328,8 +328,8 @@ void Field::evalDensity2D() {
 
 void Field::evalDensity_sycl() {
 
-  cl::sycl::queue q(cl::sycl::default_selector{});
-  std::cout << " Running on " << q.get_device().get_info<cl::sycl::info::device::name>() << std::endl;
+  sycl::queue q(sycl::default_selector_v);
+  std::cout << " Running on " << q.get_device().get_info<sycl::info::device::name>() << std::endl;
 
   double xmin = -10.0, xmax = 10.0;
   double ymin = -10.0, ymax = 10.0;
@@ -361,24 +361,24 @@ void Field::evalDensity_sycl() {
   }
   // Here we start the sycl kernel
 {
-  cl::sycl::buffer<int, 1>   icnt_buff   (wf.icntrs.data(), cl::sycl::range<1>(npri));
-  cl::sycl::buffer<int, 1>   vang_buff   (wf.vang.data()  , cl::sycl::range<1>(3*npri));
-  cl::sycl::buffer<double, 1> coor_buff  (coor            , cl::sycl::range<1>(3*natm));
-  cl::sycl::buffer<double, 1> eprim_buff (wf.depris.data(), cl::sycl::range<1>(npri));
-  cl::sycl::buffer<double, 1> coef_buff  (wf.dcoefs.data(), cl::sycl::range<1>(npri*norb));
-  cl::sycl::buffer<double, 1> nocc_buff  (wf.dnoccs.data(), cl::sycl::range<1>(norb));
-  cl::sycl::buffer<double, 1> field_buff (field_local, cl::sycl::range<1>(nsize));
+  sycl::buffer<int, 1>   icnt_buff   (wf.icntrs.data(), sycl::range<1>(npri));
+  sycl::buffer<int, 1>   vang_buff   (wf.vang.data()  , sycl::range<1>(3*npri));
+  sycl::buffer<double, 1> coor_buff  (coor            , sycl::range<1>(3*natm));
+  sycl::buffer<double, 1> eprim_buff (wf.depris.data(), sycl::range<1>(npri));
+  sycl::buffer<double, 1> coef_buff  (wf.dcoefs.data(), sycl::range<1>(npri*norb));
+  sycl::buffer<double, 1> nocc_buff  (wf.dnoccs.data(), sycl::range<1>(norb));
+  sycl::buffer<double, 1> field_buff (field_local, sycl::range<1>(nsize));
 
-  q.submit([&](cl::sycl::handler &h){
-    auto field_acc = field_buff.get_access<cl::sycl::access::mode::write>(h);
-    auto icnt_acc = icnt_buff.get_access<cl::sycl::access::mode::read>(h);
-    auto vang_acc = vang_buff.get_access<cl::sycl::access::mode::read>(h);
-    auto coor_acc = coor_buff.get_access<cl::sycl::access::mode::read>(h);
-    auto eprim_acc = eprim_buff.get_access<cl::sycl::access::mode::read>(h);
-    auto coef_acc = coef_buff.get_access<cl::sycl::access::mode::read>(h);
-    auto nocc_acc = nocc_buff.get_access<cl::sycl::access::mode::read>(h);
+  q.submit([&](sycl::handler &h){
+    auto field_acc = field_buff.get_access<sycl::access::mode::write>(h);
+    auto icnt_acc = icnt_buff.get_access<sycl::access::mode::read>(h);
+    auto vang_acc = vang_buff.get_access<sycl::access::mode::read>(h);
+    auto coor_acc = coor_buff.get_access<sycl::access::mode::read>(h);
+    auto eprim_acc = eprim_buff.get_access<sycl::access::mode::read>(h);
+    auto coef_acc = coef_buff.get_access<sycl::access::mode::read>(h);
+    auto nocc_acc = nocc_buff.get_access<sycl::access::mode::read>(h);
 
-    h.parallel_for<class Field2>(cl::sycl::range<1>(nsize), [=](cl::sycl::id<1> idx){
+    h.parallel_for<class Field2>(sycl::range<1>(nsize), [=](sycl::id<1> idx){
       double cart[3];
       int k = (int) idx % npoints_z;
       int j = ((int) idx/npoints_z) % npoints_y;
@@ -388,12 +388,12 @@ void Field::evalDensity_sycl() {
       cart[1] = ymin + j * delta;
       cart[2] = zmin + k * delta;
 
-      const int *icnt_ptr = icnt_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
-      const int *vang_ptr = vang_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
-      const double *coor_ptr = coor_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
-      const double *eprim_ptr = eprim_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
-      const double *nocc_ptr = nocc_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
-      const double *coef_ptr = coef_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
+      const int *icnt_ptr = icnt_acc.get_multi_ptr<sycl::access::decorated::no>().get_raw();
+      const int *vang_ptr = vang_acc.get_multi_ptr<sycl::access::decorated::no>().get_raw();
+      const double *coor_ptr = coor_acc.get_multi_ptr<sycl::access::decorated::no>().get_raw();
+      const double *eprim_ptr = eprim_acc.get_multi_ptr<sycl::access::decorated::no>().get_raw();
+      const double *nocc_ptr = nocc_acc.get_multi_ptr<sycl::access::decorated::no>().get_raw();
+      const double *coef_ptr = coef_acc.get_multi_ptr<sycl::access::decorated::no>().get_raw();
 
       field_acc[idx] = DensitySYCL2(norb, npri, icnt_ptr, vang_ptr, cart, coor_ptr, eprim_ptr, nocc_ptr, coef_ptr);
     });
@@ -413,8 +413,8 @@ void Field::evalDensity_sycl() {
 }
 void Field::evalDensity_sycl2() {
 
-  cl::sycl::queue q(cl::sycl::default_selector{});
-  std::cout << " Running on " << q.get_device().get_info<cl::sycl::info::device::name>() << std::endl;
+  sycl::queue q(sycl::default_selector_v);
+  std::cout << " Running on " << q.get_device().get_info<sycl::info::device::name>() << std::endl;
 
   double xmin = -10.0, xmax = 10.0;
   double ymin = -10.0, ymax = 10.0;
@@ -446,24 +446,24 @@ void Field::evalDensity_sycl2() {
   }
 
 {
-  cl::sycl::buffer<int, 1>   icnt_buff   (wf.icntrs.data(), cl::sycl::range<1>(npri));
-  cl::sycl::buffer<int, 1>   vang_buff   (wf.vang.data()  , cl::sycl::range<1>(3*npri));
-  cl::sycl::buffer<double, 1> coor_buff  (coor            , cl::sycl::range<1>(3*natm));
-  cl::sycl::buffer<double, 1> eprim_buff (wf.depris.data(), cl::sycl::range<1>(npri));
-  cl::sycl::buffer<double, 1> coef_buff  (wf.dcoefs.data(), cl::sycl::range<1>(npri*norb));
-  cl::sycl::buffer<double, 1> nocc_buff  (wf.dnoccs.data(), cl::sycl::range<1>(norb));
-  cl::sycl::buffer<double, 1> field_buff (field_local, cl::sycl::range<1>(nsize));
+  sycl::buffer<int, 1>   icnt_buff   (wf.icntrs.data(), sycl::range<1>(npri));
+  sycl::buffer<int, 1>   vang_buff   (wf.vang.data()  , sycl::range<1>(3*npri));
+  sycl::buffer<double, 1> coor_buff  (coor            , sycl::range<1>(3*natm));
+  sycl::buffer<double, 1> eprim_buff (wf.depris.data(), sycl::range<1>(npri));
+  sycl::buffer<double, 1> coef_buff  (wf.dcoefs.data(), sycl::range<1>(npri*norb));
+  sycl::buffer<double, 1> nocc_buff  (wf.dnoccs.data(), sycl::range<1>(norb));
+  sycl::buffer<double, 1> field_buff (field_local, sycl::range<1>(nsize));
 
-  q.submit([&](cl::sycl::handler &h){
-    auto field_acc = field_buff.get_access<cl::sycl::access::mode::write>(h);
-    auto icnt_acc = icnt_buff.get_access<cl::sycl::access::mode::read>(h);
-    auto vang_acc = vang_buff.get_access<cl::sycl::access::mode::read>(h);
-    auto coor_acc = coor_buff.get_access<cl::sycl::access::mode::read>(h);
-    auto eprim_acc = eprim_buff.get_access<cl::sycl::access::mode::read>(h);
-    auto coef_acc = coef_buff.get_access<cl::sycl::access::mode::read>(h);
-    auto nocc_acc = nocc_buff.get_access<cl::sycl::access::mode::read>(h);
+  q.submit([&](sycl::handler &h){
+    auto field_acc = field_buff.get_access<sycl::access::mode::write>(h);
+    auto icnt_acc = icnt_buff.get_access<sycl::access::mode::read>(h);
+    auto vang_acc = vang_buff.get_access<sycl::access::mode::read>(h);
+    auto coor_acc = coor_buff.get_access<sycl::access::mode::read>(h);
+    auto eprim_acc = eprim_buff.get_access<sycl::access::mode::read>(h);
+    auto coef_acc = coef_buff.get_access<sycl::access::mode::read>(h);
+    auto nocc_acc = nocc_buff.get_access<sycl::access::mode::read>(h);
 
-    h.parallel_for<class Field3>(cl::sycl::range<3>(npoints_x, npoints_y, npoints_z), [=](cl::sycl::id<3> idx){
+    h.parallel_for<class Field3>(sycl::range<3>(npoints_x, npoints_y, npoints_z), [=](sycl::id<3> idx){
       double cart[3];
       int k = idx[2];
       int j = idx[1];
@@ -474,12 +474,12 @@ void Field::evalDensity_sycl2() {
       cart[1] = ymin + j * delta;
       cart[2] = zmin + k * delta;
 
-      const int *icnt_ptr = icnt_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
-      const int *vang_ptr = vang_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
-      const double *coor_ptr = coor_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
-      const double *eprim_ptr = eprim_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
-      const double *nocc_ptr = nocc_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
-      const double *coef_ptr = coef_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
+      const int *icnt_ptr = icnt_acc.get_multi_ptr<sycl::access::decorated::no>().get_raw();
+      const int *vang_ptr = vang_acc.get_multi_ptr<sycl::access::decorated::no>().get_raw();
+      const double *coor_ptr = coor_acc.get_multi_ptr<sycl::access::decorated::no>().get_raw();
+      const double *eprim_ptr = eprim_acc.get_multi_ptr<sycl::access::decorated::no>().get_raw();
+      const double *nocc_ptr = nocc_acc.get_multi_ptr<sycl::access::decorated::no>().get_raw();
+      const double *coef_ptr = coef_acc.get_multi_ptr<sycl::access::decorated::no>().get_raw();
 
       field_acc[iglob] = DensitySYCL2(norb, npri, icnt_ptr, vang_ptr, cart, coor_ptr, eprim_ptr, nocc_ptr, coef_ptr);
     });
