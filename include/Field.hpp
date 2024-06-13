@@ -22,7 +22,7 @@ public:
   void evalDensity_sycl();
   void evalDensity_sycl2();
   static SYCL_EXTERNAL double DensitySYCL(int, int, int*, int*, double*, double*, double *,double*, double*, double*);
-  static SYCL_EXTERNAL double DensitySYCL2(int, int, int*, int*, double*, double*, double *,double*, double*);
+  static SYCL_EXTERNAL double DensitySYCL2(int, int, const int*, const int*, const double*, const double*, const double *, const double*, const double*);
 
   void dumpXYZ(std::string filename);
 

@@ -52,9 +52,9 @@ double Field::DensitySYCL(int norb, int npri,
 
 
 double Field::DensitySYCL2(int norb, int npri,
-                          int *icnt, int *vang,
-                          double *r, double *coor, double *depris,
-                          double *nocc, double *coef){
+                          const int *icnt, const int *vang,
+                          const double *r, const double *coor, const double *depris,
+                          const double *nocc, const double *coef){
   double den;
   double x = r[0];
   double y = r[1];
