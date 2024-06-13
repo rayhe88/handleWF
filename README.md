@@ -52,7 +52,7 @@ cmake --build .
 ```
 ./handleWF.x ../test/dimer_HCOOH.wfx
 Compilation Date: Jun 12 2024  14:19:26
-Git SHA1: 062b803
+Git SHA1: 77e969d-dirty
  Points ( 80,80,40)
  TotalPoints : 256000
  Running on 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz
@@ -61,17 +61,17 @@ Git SHA1: 062b803
  Running on 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz
  Points ( 80,80,40)
  TotalPoints : 256000
- Time for CPU : 5.24481e+07 μs
- Time for GPU  : 1.12036e+06 μs (Kernel 1)
- Time for GPU  : 2.275e+06 μs (Kernel 2)
- Ratio CPU/GPU (kernel1) : 46.8139
- Ratio CPU/GPU (kernel2) : 23.0541
+ Time for CPU : 5.22786e+07 μs
+ Time for GPU  : 1.53022e+06 μs (Kernel 1)
+ Time for GPU  : 2.22982e+06 μs (Kernel 2)
+ Ratio CPU/GPU (kernel1) : 34.1641
+ Ratio CPU/GPU (kernel2) : 23.4452
 ```
 ### Sunspot - ALCF Machine
 ```
 ./handleWF.x ../test/dimer_HCOOH.wfx
 Compilation Date: Jun 12 2024  19:24:00
-Git SHA1: 062b803
+Git SHA1: 77e969d-dirty
  Points ( 80,80,40)
  TotalPoints : 256000
  Running on Intel(R) Data Center GPU Max 1550
@@ -80,18 +80,19 @@ Git SHA1: 062b803
  Running on Intel(R) Data Center GPU Max 1550
  Points ( 80,80,40)
  TotalPoints : 256000
- Time for CPU : 5.11796e+07 μs
- Time for GPU  : 1.64558e+06 μs (Kernel 1)
- Time for GPU  : 140444 μs (Kernel 2)
- Ratio CPU/GPU (kernel1) : 31.1012
- Ratio CPU/GPU (kernel2) : 364.413
+ Time for CPU : 5.12023e+07 μs
+ Time for GPU  : 1.60554e+06 μs (Kernel 1)
+ Time for GPU  : 143117 μs (Kernel 2)
+ Ratio CPU/GPU (kernel1) : 31.8911
+ Ratio CPU/GPU (kernel2) : 357.765
+
 ```
 ### Polaris - ALCF Machine
 ```
 ./handleWF.x ../test/dimer_HCOOH.wfx 
 Version: 0.0
 Compilation Date: Jun 12 2024  22:11:56
-Git SHA1: 0576980-dirty
+Git SHA1: 77e969d-dirty
  Points ( 80,80,40)
  TotalPoints : 256000
  Running on NVIDIA A100-SXM4-40GB
@@ -100,11 +101,11 @@ Git SHA1: 0576980-dirty
  Running on NVIDIA A100-SXM4-40GB
  Points ( 80,80,40)
  TotalPoints : 256000
- Time for CPU : 1.09698e+08 μs
- Time for GPU  : 2.60498e+06 μs (Kernel 1)
- Time for GPU  : 263890 μs (Kernel 2)
- Ratio CPU/GPU (kernel1) : 42.1109
- Ratio CPU/GPU (kernel2) : 415.696
+ Time for CPU : 4.61134e+07 μs
+ Time for GPU  : 2.62889e+06 μs (Kernel 1)
+ Time for GPU  : 267336 μs (Kernel 2)
+ Ratio CPU/GPU (kernel1) : 17.541
+ Ratio CPU/GPU (kernel2) : 172.492
 ```
 ## Acknowledgements
 This research used resources of the Argonne Leadership Computing Facility, which is a DOE Office of Science User Facility supported under Contract DE-AC02-06CH11357. Argonne National Laboratory’s work was supported by the U.S. Department of Energy, Office of Science, under contract DE-AC02-06CH11357.
