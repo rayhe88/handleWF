@@ -388,12 +388,12 @@ void Field::evalDensity_sycl() {
       cart[1] = ymin + j * delta;
       cart[2] = zmin + k * delta;
 
-      int *icnt_ptr = icnt_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
-      int *vang_ptr = vang_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
-      double *coor_ptr = coor_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
-      double *eprim_ptr = eprim_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
-      double *nocc_ptr = nocc_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
-      double *coef_ptr = coef_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
+      const int *icnt_ptr = icnt_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
+      const int *vang_ptr = vang_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
+      const double *coor_ptr = coor_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
+      const double *eprim_ptr = eprim_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
+      const double *nocc_ptr = nocc_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
+      const double *coef_ptr = coef_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
 
       field_acc[idx] = DensitySYCL2(norb, npri, icnt_ptr, vang_ptr, cart, coor_ptr, eprim_ptr, nocc_ptr, coef_ptr);
     });
@@ -474,12 +474,12 @@ void Field::evalDensity_sycl2() {
       cart[1] = ymin + j * delta;
       cart[2] = zmin + k * delta;
 
-      int *icnt_ptr = icnt_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
-      int *vang_ptr = vang_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
-      double *coor_ptr = coor_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
-      double *eprim_ptr = eprim_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
-      double *nocc_ptr = nocc_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
-      double *coef_ptr = coef_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
+      const int *icnt_ptr = icnt_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
+      const int *vang_ptr = vang_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
+      const double *coor_ptr = coor_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
+      const double *eprim_ptr = eprim_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
+      const double *nocc_ptr = nocc_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
+      const double *coef_ptr = coef_acc.get_multi_ptr<cl::sycl::access::decorated::no>().get_raw();
 
       field_acc[iglob] = DensitySYCL2(norb, npri, icnt_ptr, vang_ptr, cart, coor_ptr, eprim_ptr, nocc_ptr, coef_ptr);
     });
