@@ -13,9 +13,9 @@ class Field {
    public:
     Field(Wavefunction &wf);
 
-    double orbital(Rvector r, int i);
+    double orbital(std::vector<double> r, int i);
     double gaussiana(std::vector<double> r, int mu);
-    double Density(Rvector r);
+    double Density(std::vector<double> r);
     void evalDensity();
     void evalDensity2();
     void evalDensity2D();

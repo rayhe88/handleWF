@@ -96,11 +96,12 @@ double Field::gaussiana(std::vector<double> r, int mu) {
     int lx = wf.vang[3 * mu];
     int ly = wf.vang[3 * mu + 1];
     int lz = wf.vang[3 * mu + 2];
-    Rvector R(wf.atoms[wf.icntrs[mu]].getCoors());
+    // Rvector R(wf.atoms[wf.icntrs[mu]].getCoors());
+    std::vector<double> R = wf.atoms[wf.icntrs[mu]].getCoors();
 
-    double x_part = r.get_x() - R.get_x();
-    double y_part = r.get_y() - R.get_y();
-    double z_part = r.get_z() - R.get_z();
+    double x_part = r[0] - R[0];
+    double y_part = r[1] - R[1];
+    double z_part = r[2] - R[2];
 
     double diff2 = pow(x_part, 2) + pow(y_part, 2) + pow(z_part, 2);
 
@@ -111,7 +112,7 @@ double Field::gaussiana(std::vector<double> r, int mu) {
     return gauss;
 }
 
-double Field::orbital(Rvector r, int i) {
+double Field::orbital(std::vector<double> r, int i) {
     double orb;
 
     orb = 0.;
@@ -120,7 +121,7 @@ double Field::orbital(Rvector r, int i) {
 
     return orb;
 }
-double Field::Density(Rvector r) {
+double Field::Density(std::vector<double> r) {
     double den;
     den = 0;
     for (int i = 0; i < wf.norb; i++)
@@ -151,7 +152,7 @@ void Field::evalDensity() {
             double y = ymin + j * delta;
             for (int k = 0; k < npoints_z; k++) {
                 double z = zmin + k * delta;
-                Rvector r(x, y, z);
+                std::vector<double> r = {x, y, z};
                 double den = Density(r);
 
                 field.push_back(den);
@@ -177,10 +178,11 @@ void Field::evalDensity2() {
 
     double *coor = new double[3 * wf.natm];
     for (int i = 0; i < wf.natm; i++) {
-        Rvector R(wf.atoms[i].getCoors());
-        coor[3 * i] = R.get_x();
-        coor[3 * i + 1] = R.get_y();
-        coor[3 * i + 2] = R.get_z();
+        // Rvector R(wf.atoms[i].getCoors());
+        std::vector<double> R = wf.atoms[i].getCoors();
+        coor[3 * i] = R[0];
+        coor[3 * i + 1] = R[1];
+        coor[3 * i + 2] = R[2];
     }
 
     std::cout << " Points ( " << npoints_x << "," << npoints_y << ","
@@ -320,7 +322,8 @@ void Field::evalDensity2D() {
             for (int j = 0; j < npoints_y; j++) {
                 double y = ymin + j * delta;
 
-                Rvector r(x, y, 0.0);
+                // Rvector r(x, y, 0.0);
+                std::vector<double> r = {x, y, 0.0};
                 double den = Density(r);
 
                 fout << std::setw(13) << std::setprecision(6) << std::fixed
@@ -364,10 +367,11 @@ void Field::evalDensity_sycl() {
 
     double *coor = new double[3 * natm];
     for (int i = 0; i < natm; i++) {
-        Rvector R(wf.atoms[i].getCoors());
-        coor[3 * i] = R.get_x();
-        coor[3 * i + 1] = R.get_y();
-        coor[3 * i + 2] = R.get_z();
+        // Rvector R(wf.atoms[i].getCoors());
+        std::vector<double> R = wf.atoms[i].getCoors();
+        coor[3 * i] = R[0];
+        coor[3 * i + 1] = R[1];
+        coor[3 * i + 2] = R[2];
     }
     // Here we start the sycl kernel
     {
@@ -469,10 +473,11 @@ void Field::evalDensity_sycl2() {
 
     double *coor = new double[3 * natm];
     for (int i = 0; i < natm; i++) {
-        Rvector R(wf.atoms[i].getCoors());
-        coor[3 * i] = R.get_x();
-        coor[3 * i + 1] = R.get_y();
-        coor[3 * i + 2] = R.get_z();
+        // Rvector R(wf.atoms[i].getCoors());
+        std::vector<double> R = wf.atoms[i].getCoors();
+        coor[3 * i] = R[0];
+        coor[3 * i + 1] = R[1];
+        coor[3 * i + 2] = R[2];
     }
 
     {
