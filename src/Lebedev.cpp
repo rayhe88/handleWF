@@ -737,3 +737,18 @@ void Lebedev::Lebedev0434() {
   v = 0.2236607760437849E-2;
   genGroup06(a, b, v);
 }
+
+Rvector Lebedev::transform(Rvector rvec, double rnew) {
+  double x = rvec.get_x();
+  double y = rvec.get_y();
+  double z = rvec.get_z();
+
+  double theta, phi;
+  theta = acos(z);
+  phi = atan2(y, x);
+  x = rnew * sin(theta) * cos(phi);
+  y = rnew * sin(theta) * sin(phi);
+  z = rnew * cos(theta);
+
+  return Rvector(x, y, z);
+}

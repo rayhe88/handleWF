@@ -12,6 +12,7 @@ public:
 
   std::vector<Rvector> &getRvecs();
   std::vector<double> &getWeights();
+  static Rvector transform(Rvector rvec, double newr);
 
 private:
   int npoints;
